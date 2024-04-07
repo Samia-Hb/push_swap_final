@@ -564,7 +564,7 @@ int find_closest_pos_v2(Stack *stackA,int element)
     Stack *courant = stackA;
     while(courant)
     {
-        if(courant->data > element && courant->data > min_diff)
+        if(courant->data > element && courant->data < min_diff)
         {
             min_diff = courant->data;
             Close_pos = pos(stackA,min_diff);
@@ -636,7 +636,7 @@ void push_the_min_v2(Stack **stackA,Stack **stackB,int element)
             }
         }
     }
-    sort_stackA_before(stackA,find_closest_pos(*stackA,element),element);
+    sort_stackA_before(stackA,find_closest_pos_v2(*stackA,element),element);
     pa(stackA,stackB);
 }
 int calculate_Min_element_v2(Stack *stackA,Stack *stackB)
@@ -670,15 +670,43 @@ int calculate_Min_element_v2(Stack *stackA,Stack *stackB)
     return(Min_element);
     ///////
 }
-void push_back_to_stackA_v2(Stack **stackA,Stack **stackB)
+// int findMinMovementElement(Stack *stackB, Stack *stackA)
+// {
+//     int minElement = INT_MAX;
+//     int minMovement = INT_MAX;
+//     Stack *currentB = stackB;
+//     while (currentB != NULL)
+//     {
+//         int movements = calcule_nbr_mouvement_stackA(stackA, stackB, currentB->data);
+//         if (movements < minMovement)
+//         {
+//             minMovement = movements;
+//             minElement = currentB->data;
+//         }
+//         currentB = currentB->next;
+//     }
+//     return minElement;
+// }
+
+void pushMinElementToStackA(int element, Stack **stackA, Stack **stackB)
 {
-    int Min_element;
-    while(ft_lstsize(*stackB) != 0)
+    int posInStackA = find_closest_pos_v2(*stackA, element);
+    sort_stackA_before(stackA, posInStackA, element);
+    pa(stackA, stackB);
+    printf("pa\n");
+}
+
+
+void push_back_to_stackA_v2(Stack **stackA, Stack **stackB)
+{
+    while (*stackB != NULL)
     {
-        Min_element = calculate_Min_element_v2(*stackA,*stackB);
-        push_the_min_v2(stackA,stackB,Min_element);
+        int minElement = calculate_Min_element_v2(*stackA,*stackB);
+        pushMinElementToStackA(minElement, stackA, stackB);
     }
 }
+
+
 int main(int argc, char** argv)//done
 {
     Stack* stackA;
@@ -704,19 +732,17 @@ int main(int argc, char** argv)//done
     else
     {
         push_to_stackB(&stackA,&stackB);
-        sort_stackB(&stackB);
         sort_three_element(&stackA);
-        //printf("----------------\n");
-        //push_back_to_stackA_v2(&stackA,&stackB);
+        push_back_to_stackA_v2(&stackA,&stackB);
     }
-    // Stack *courant = stackA;
-    // int i = 0;
-    // while(courant)
-    // {
-    //     printf("data of stack_A %d = %d\n",i,courant->data);
-    //     courant = courant -> next;
-    //     i++;
-    // }
+    Stack *courant = stackA;
+    int i = 0;
+    while(courant)
+    {
+        printf("data of stack_A %d = %d\n",i,courant->data);
+        courant = courant -> next;
+        i++;
+    }
     // printf("------------------\n");
     // courant = stackB;
     // i = 0;
